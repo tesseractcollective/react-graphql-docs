@@ -75,6 +75,20 @@ Configs are used to tell the form how to handle relationships.  Everything works
 -> HasuraDataConfig
 -> SelectViaRelationship
 
+**Auto detection of relationship configs**
+We do our best to auto-detect which config to use.  We will look for `tableName` + `Select` first, so if you have a userProfile, we'll look for an key in your configs called `userProfileSelect: {...}`, then we'll look for just the `tableName`, like this: `userProfile: {...}`.  
+
+* We do this first by looking on configs passed into the component, so you can be specific and override anything you need.  
+* If we don't find it there, then we'll look for the same patterns on the configs object given to the top level provider.
+* Lastly, we'll look on the global configs for anything with the same typeName.  You probably don't want this to happen too often, so name your configs well
+
+**Auto detection of labels**
+We do our best to try and autodetect which labels to use.  For now it's a simple list:
+
+`description > desc > displayName > name > type > status`
+
+If you want to use something different you can specify which field to use by setting the `config.relationshipMeta?.labelField`.
+
 ##### USE CASE: I have a view that I exposed in hasura and need to modify the table the view is over
 ##### USE CASE: I have a relationship that isn't exposed in my graphql layer and need to connect two tables
 ##### USE CASE: I want to provide a where clause to filter the query for on particular relationship

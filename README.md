@@ -22,3 +22,30 @@ return <ReactGraphqlUIContext.Provider value={{
   ...
 </ReactGraphqlUIContext.Provider>
 ```
+
+# Next Steps
+
+If you're new to Tesseract's react-graphql library checkout:
+
+* [How to setup your project](SetupYourProject.md)
+* [How to configure react-graphql](reactGraphqlConfig.md)
+* [Setting up your build](SettingUpYourBuild.md)
+* [Dive deeper into Item vs Variable on mutations](ExplainingMutationItemVsVariable.md)
+
+If you want to checkout the cool UI support we have look at
+
+* [FlexForm](FlexForm.md)
+* [FlexFormLocal](FlexFormLocal.md)
+* [useDataTable](useDataTable.md)
+
+Other references
+
+* [Typescript support](ReactGraphqlTypescriptSupport.md)
+
+Third Parties we use
+
+* [PrimeReact](https://www.primefaces.org/primereact/showcase)
+* [Jotai](https://jotai.pmnd.rs/docs/introduction)
+* [Tailwindcss](https://tailwindcss.com)
+* [urql](https://formidable.com/open-source/urql/docs/)
+* [Hasura](https://hasura.io)

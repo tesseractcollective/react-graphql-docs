@@ -49,11 +49,17 @@ import schema from './generated/graphql.schema.json'; //comes from graphql-code-
 const HasuraConfig = buildHasuraConfig(
   schema,
   {
-    typename: 'claim',
-    primaryKey: ['id'],
-    fieldFragment: ClaimFieldsFragmentDoc,
+    claim: {
+      typename: 'claim',
+      primaryKey: ['id'],
+      fieldFragment: ClaimFieldsFragmentDoc,
+    }
   }
 ```
+
+> NAMING CONVENTIONS:  We highly recommend your configs match your typenames wherever possible.  It will make things easier to remember and allow us to auto-detect some things for you.
+
+> NAMING CONVETIONS for Lookup Tables: If you're going to be using any tables to lookup values/ids for another table then we recommend the pattern of typeNameSelect.  We key off of this and add relationships for you.
 
 ### Other options
 
