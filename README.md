@@ -16,11 +16,11 @@ Developer experience is going to involve one time setup of your code generator a
 ## Dependencies 
 Install these dependencies:
 
-`@tesseractcollective/react-graphql primereact primeicons primeflex react-hook-form jotai urql`
+`@tesseractcollective/react-graphql jotai primereact primeicons primeflex react-hook-form urql`
 
 And these dev dependencies:
 
-`postcss-import @graphql-codegen/cli @graphql-codegen/introspection @graphql-codegen/typescript @graphql-codegen/typescript-operations postcss postcss-nested`
+`graphql graphql-tag @graphql-codegen/cli @graphql-codegen/introspection @graphql-codegen/typescript @graphql-codegen/typescript-operations postcss postcss-nested postcss-import`
 
 ## react-graphql-ui Provider
 
@@ -62,3 +62,9 @@ Third Parties we use
 * [Tailwindcss](https://tailwindcss.com)
 * [urql](https://formidable.com/open-source/urql/docs/)
 * [Hasura](https://hasura.io)
+* [ReactHookForm](https://react-hook-form.com/api)
+
+# Developer Dependencies
+
+In development we also use:
+* [Vite](https://vitejs.dev)

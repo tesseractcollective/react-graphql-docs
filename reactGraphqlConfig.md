@@ -1,3 +1,7 @@
+## graphql-code-generator docs
+
+[graphql code generator](https://www.graphql-code-generator.com/docs/getting-started)
+
 ## Setup & run graphql code generator
 
 You want to use typescript, typescript-operations, and introspection plugins.
@@ -6,10 +10,10 @@ We generate all our fragments, scalars, and types to a resourceApi file.
 We generate our schema to a separate file.
 You can customize this how you want.
 
-example config:
+example `codegen.js` in the root of your project:
 ```
 const env = process.argv[4] || 'dev';
-const config = require(`../......`);
+const env = require(`./env.json`);
 
 module.exports = {
   schema: [
@@ -38,9 +42,17 @@ module.exports = {
 };
 ```
 
-## graphql-code-generator docs
+## Run the generator
+You probably want something like this in your scripts:
 
-[graphql code generator](https://www.graphql-code-generator.com/docs/getting-started)
+`"codegen": "graphql-codegen --config codegen.js dev"`
+
+If you have a hasura folder and want to generate metadata you probably want something like this:
+
+```
+"buildmeta": "npx any-json combine ../hasura/metadata/databases/default/tables/*.yaml --out=./src/resources/config/generated/metadata.json",
+"codegen": "graphql-codegen --config codegen.js dev && pnpm buildmeta"
+```
 
 ## Set up config file
 IE - `hasuraConfig.ts`
@@ -123,6 +135,9 @@ export interface HasuraDataConfig {
 
 ## Add metadata for relationship support
 
+Setup Hasura CLI: 
+[Hasura CLI Docs](https://hasura.io/docs/latest/graphql/core/hasura-cli/index.html)
+
 By adding metadata information from hasura we are able to do a lot more for you accross your relationships.
 
 To add metadata we need to get it in json format and pass it into our `buildHasuraConfig` call:
@@ -146,4 +161,3 @@ How we get our metadata:
 * We have our hasura folder as a sibling to our UI folder.  By running this from our UI folder we're able to generate the metadata right next to where we generate our schema, and our typescript keeping it all in one place to reference.
 
 > IF you don't have your hasura-cli setup, follow their docs, they're good.
-

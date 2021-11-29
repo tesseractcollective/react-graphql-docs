@@ -12,21 +12,23 @@ To build a dataTable against graphql in a project you need to
 - Handle row clicks
 - Implement custom columns
 - Implement Inserts and make sure they update your table
-- Probably implement a seamless modal system to help with inserts, or navigation to a new screen
 - Implement Deletes
-- Probably implement a confirmation dialogue to confirm deletion
 - Implement updating rows
+- Probably implement a confirmation dialogue to confirm deletion
+- Probably implement a seamless modal system to help with inserts, or navigation to a new screen
 - Probably implement a dialog or a new screen to show your update form
+
+That is just for the front end.  If you have to do server-side as well you have a lot more.  Fortunately hasura gives us all the server side support we need with pagination, sorting, and filtering.
 
 useDataTAble gives you a composable hook that marries multiple libraries together to give you a rapid experience for building dataTables connected to a graphql backend
 
 ## Libraries
 
 - graphql & react-graphql - To do the queries and mutations
-- prime react - has a slick DataTable component, confirmation dialogues, and modals, and much more. See: https://www.primefaces.org/primereact/showcase/#/datatable
-- tailwindcss - to handle styling
-- react-hook-form - for managing the form, state, error, dirty, etc for updates and inserts
-- jotai - To connect react-graphql and useDataTable together so you keep full composability
+- [PrimeReact](https://www.primefaces.org/primereact/showcase) - has a slick DataTable component, confirmation dialogues, and modals, and much more. See: https://www.primefaces.org/primereact/showcase/#/datatable
+- [Tailwindcss](https://tailwindcss.com) - to handle styling
+- [ReactHookForm](https://react-hook-form.com/api) - for managing the form, state, error, dirty, etc for updates and inserts
+- [Jotai](https://jotai.pmnd.rs/docs/introduction) - To connect react-graphql and useDataTable together so you keep full composability
 
 
 ## Composing your DataTable
@@ -40,7 +42,7 @@ filterProps: UseDataTableWhere;        //Spread onto <DataTable>
 toolbar: ReactNode;                    //Placed anywhere outside of <DataTable>
 insertButton: ReactNode;               //Placed anywhere outside of <DataTable>
 actionColumn: ReactNode;               //Child of <DataTable>
-dialogs: ReactNode[];                  //Placed anywhere outside of <DataTable>
+dialogs: ReactNode[];                  //Placed anywhere outside of <DataTable> for insert/update/delete
 selectedRow: any;                      //The currently selected row
 setSelectedRow: (row?: any) => void;   //Set currently selected row externaly
 hideUpsertDialog: () => void;          //Call this function to hide the upsertDialog
@@ -116,7 +118,7 @@ function DataTableBasic() {
         {columns.map((col) => col.component)}
         {actionColumn}
       </DataTable>
-      {...dialogs}
+      {dialogs.map(d=> d)}
     </div>
   )
 ```
@@ -180,13 +182,7 @@ function DataTableBasic() {
 
 ### `gqlConfig: HasuraDataConfig;`
 
--> hasura
--> graphql
--> typename
--> primary key
--> fragments
-
--> graphql code generator
+See [HasuraDataConfig](https://github.com/tesseractcollective/react-graphql/blob/master/src/types/hasuraConfig/index.ts) for the shape
 
 ### `queryManyState: IUseInfiniteQueryManyResults<T>;`
 
@@ -202,38 +198,60 @@ How many items do you want per page.
 
 If you want us to help with inserts then tell us where to put it on the toolbar, or that you want it manually.
 
-Requires you to place the `toolbar` or the `insertButton` prop we return.
+REQUIRES: Place the `toolbar` or the `insertButton` prop we return.
+REQUIRES: Place `dialogues` in your render
 
 ### `update?: boolean;`
 
-Do you want to show the update button in the actionColumn
+Do you want to show the update button in the actionColumn. 
+
+REQUIRES: Place `dialogues` in your render
 
 ### `delete?: boolean;`
 
 Do you want to show the delete button in the actionColumn
 
+REQUIRES: Place `dialogues` in your render
+
 ### `upsert?: { upsertGqlConfig?: HasuraDataConfig; upsertFlexFormProps?: Partial<IFlexFormProps>; };`
 
 Configure the FlexForm used by updates and inserts. Changes here will impact both forms since they are both shown in the same modal.
 
-- `upsertGqlConfig?` - Only needed if you want to use a different resource for your form than you do your dataTable.
+- `upsertGqlConfig?` - Only needed if you want to use a different resource for your form than you do your dataTable.  This is always the case when using a `View` in hasura/postgres (non-materialized/default).
 - `upsertFlexFormProps?` - Pass in any props you would to `<FlexForm>` here and we'll pass them through and help everything play nice together.
 
 > What if I want the forms to be different?!
 
 Use this for your updates, and then place your own insertButton
 
-### `setIdInQueryOnClick?: boolean;`
+### `onRowClick?: (path: string) => void;`
 
-set this to true if you want us to update the queryParams on rowClick
+NEW in `RGUI@0.2.0` and above.
 
-IE - `www.myawesomesite.com` becomes `www.myawesomesite.com?pk=row-id-for-last-clicked-row` so you can do navigate, show a modal, whatever
+Invoke the given function whenever a row is clicked.  Will pass in a `path:string` that can be used to easily navigate to a new page.  This is how we build the path:
 
-### `primaryKeyName?: string;`
+```tsx
+function updateSelectRowInQuery(primaryKeyValue: string, onRowClick?: (path: string) => void, primaryKeyName = 'id') {
+  const currentParams = queryString.parse(window.location.search);
+  let nextParams: { [key: string]: any } = {};
+  nextParams = { ...currentParams, [primaryKeyName]: primaryKeyValue };
+  const queryStr = queryString.stringify(nextParams);
+  if (onRowClick) {
+    onRowClick(window.location.pathname + '?' + queryStr);
+  }
+}
+```
 
-Override the primary key label used during `setIdInQueryOnClick`
+To navigate somewhere you would do something like this in React-router-5:
 
-IE - change `pk` into `id` or `pk` into `zorgons-chosen`
+```tsx
+const history = useHistory();
+...
+
+onRowClick={(path)=> history.push(path)}
+
+```
+
 
 ### `queryArgsAtom?: PrimitiveAtom<UseDataTableQueryArgsAtom>;`
 
@@ -283,6 +301,21 @@ const { dataTableProps, columns, orderByProps } = useDataTable({
   )
 ```
 
+#### Excluding columns from sort:
+
+To exclude a column from sort you would override sortable on that column by passing in columnProps using the name of the column as the key:
+
+```
+const { dataTableProps, columns, orderByProps } = useDataTable({
+    gqlConfig: HasuraConfig.claimAmount,
+    queryManyState: queryState,
+    queryArgsAtom: exampleQueryArgsAtom3,
+    sortable: true,
+    columnProps: { bio: { sortable: false } }
+  })
+```
+
+
 ### `columnProps?: Record<string, ColumnPropsForEquality | ColumnPropsForString>;`
 
 Pass through props onto the `PrimeReact.Column`
@@ -315,24 +348,26 @@ const { dataTableProps, columns, filterProps, paginationProps } =
 ```
 
 Prime React defines the following props that influence filtering that we can pass through:
-```
-filter	              boolean	false	Defines if a column can be filtered.
-filterMatchMode	      string	null	Defines filterMatchMode; "startsWith", "contains", "endsWidth", "equals", "notEquals", "in", "lt", "lte", "gt", "gte" and "custom".
-filterType	          string	text	Type of the filter input field.
-filterPlaceholder	    string	null	Defines placeholder of the input fields.
-filterMaxlength	      number	null	Specifies the maximum number of characters allowed in the filter element.
-filterElement	        object	null	Element for custom filtering.
-filterFunction	      function	null	Custom filter function.
-excludeGlobalFilter	  boolean	false	Whether to exclude from global filtering or not.
-filterHeaderStyle	    object	null	Inline style of the filter header.
-filterHeaderClassName	string	null	Style class of the filter header.
-```
+
+|propName|type|defaultValue|description|
+|---|---|---|---|
+|filter	              |boolean|	false|	Defines if a column can be filtered.|
+|filterMatchMode	      |string|	null|	Defines filterMatchMode; "startsWith", "contains", "endsWidth", "equals", "notEquals", "in", "lt", "lte", "gt", "gte" and "custom".|
+|filterType	          |string|	text|	Type of the filter input field.|
+|filterPlaceholder	    |string|	null|	Defines placeholder of the input fields.|
+|filterMaxlength	      |number|	null|	Specifies the maximum number of characters allowed in the filter element.|
+|filterElement	        |object|	null|	Element for custom filtering.|
+|filterFunction	      |function|	null|	Custom filter function.|
+|excludeGlobalFilter	  |boolean|	false|	Whether to exclude from global filtering or not.|
+|filterHeaderStyle	    |object|	null|	Inline style of the filter header.|
+|filterHeaderClassName	|string|	null|	Style class of the filter header.|
+
 
 The main support we're providing is attaching filter to the columns if you set `filterable:true`.
 
 As secondary support we mapped filterMatchMode to Hasura operations based on the scalar datatype of the field.  Basically we give you typescript types so that you don't do something with PrimeReact that Hasura doesn't support, like doing startsWith against a number.
 
-###### USE CASE: change match mode
+#### USE CASE: change match mode
 
 By default, the filterMatchMode is `startsWith`, so if you want contains, ends with, equality, or other comparison types you'll do it via the columnProps
 
@@ -349,7 +384,7 @@ useDataTable({
     })
 ```
 
-###### USE CASE: filter on only some fields
+#### USE CASE: filter on only some fields
 If you only want the filter on certain fields you can manually set it, or exclude it.
 
 ```
@@ -380,7 +415,7 @@ useDataTable({
 });
 ```
 
-###### USE CASE: Custom filter component
+#### USE CASE: Custom filter component
 
 ```
 useDataTable({
@@ -392,3 +427,19 @@ useDataTable({
   },
 });
 ```
+
+### `setIdInQueryOnClick?: boolean;`
+
+DEPRECATED in `RGUI@0.2.0` and above. Replaced with `onRowClick`
+
+set this to true if you want us to update the queryParams on rowClick
+
+IE - `www.myawesomesite.com` becomes `www.myawesomesite.com?pk=row-id-for-last-clicked-row` so you can do navigate, show a modal, whatever
+
+### `primaryKeyName?: string;`
+
+DEPRECATED in `RGUI@0.2.0` and above.
+
+Override the primary key label used during `setIdInQueryOnClick`
+
+IE - change `pk` into `id` or `pk` into `zorgons-chosen`.  Default is id.

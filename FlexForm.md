@@ -68,19 +68,19 @@ See [HasuraDataConfig](https://github.com/tesseractcollective/react-graphql/blob
 
 ### `data : {key: value}`
 Pass in an object where the keys match the shape of your data
-##### USE CASE: I have data already when the component is loaded, and I want it populate it up front
+### USE CASE: I have data already when the component is loaded, and I want it populate it up front
 
 ### `fields: string`
 Pass in an array of field names 
-##### USE CASE:  I have a fragment with a lot more fields than I want to use on this form
+### USE CASE:  I have a fragment with a lot more fields than I want to use on this form
 
 ### `configs: { string: HasuraDataConfig }`
 Configs are used to tell the form how to handle relationships. Everything works off of react-graphql configs, so that's all we need to supply here.
 
-##### USE CASE: I have a view that I exposed in hasura and need to modify the table the view is over
-##### USE CASE: I have a relationship that isn't exposed in my graphql layer and need to connect two tables
-##### USE CASE: I want to provide a where clause to filter the query for one particular relationship
-##### USE CASE: I want to override the fragment/config used on this form from the default one found by react-graphql-ui
+### USE CASE: I have a view that I exposed in hasura and need to modify the table the view is over
+### USE CASE: I have a relationship that isn't exposed in my graphql layer and need to connect two tables
+### USE CASE: I want to provide a where clause to filter the query for one particular relationship
+### USE CASE: I want to override the fragment/config used on this form from the default one found by react-graphql-ui
 
 
 Example: let's say we have a [foreignKeyId] in your fragment like [personId], and we want the user to be able to select a valid person.  To be able to select a valid [personId] I would add a config here for the graphql relationship that goes on top of my foreign key.  IE - person.
@@ -114,32 +114,32 @@ Pass in a separate config for insert statments to use instead of the config
 
 -> useInsert Props
 
-##### USE CASE: I need to insert using different props than the defaults
+### USE CASE: I need to insert using different props than the defaults
 
 ### `updateConfig: HasuraDataConfig`
 Pass in a separate config for update statments to use instead of the config
 
 -> useUpdate Props
 
-##### USE CASE: I need to update using different props than the defaults
+### USE CASE: I need to update using different props than the defaults
 
 ### `isNew: boolean`
 if isNew is true, FlexForm will insert.  Else it will update (default).
 
-##### USE CASE: I want to use flexForm to gather data to insert
+### USE CASE: I want to use flexForm to gather data to insert
 
 ### `onSubmit: (data: any) => void`
 Called when the form is submitted.  This prevents our default from getting called, thereby, not saving the data.
 
-##### USE CASE: I want to override the form submission and handle it myself.
+### USE CASE: I want to override the form submission and handle it myself.
 
 ### `onSuccess: (data: any) => void`
 Called when the form submission is successful.
 Does not work when onSubmit is also provided.
 
-##### USE CASE: I want to show a success Toast
-##### USE CASE: I want to trigger a navigation event after the form is saved
-##### USE CASE: I want start my dancing gnomes animation complete with celebratory confetti
+### USE CASE: I want to show a success Toast
+### USE CASE: I want to trigger a navigation event after the form is saved
+### USE CASE: I want start my dancing gnomes animation complete with celebratory confetti
 
 ### `components: Record<string, (props: ScalarComponentPropsBase) => ReactElement>`
 Override one or more components used by the form.
@@ -148,21 +148,81 @@ The key of the object needs to exactly match the graphql field name.
 
 The component props must be ScalarComponentPropsBase and connect your component into react-hook-form via useController.
 
--> StringInput
+### USE CASE: Normally I show an input component, but for this one form I want to use a select box instead to limit input options.
 
-##### USE CASE: Normally I show an input component, but for this one form I want to use a select box instead to limit input options.
-##### USE CASE: I have a relationship in my graphql fragment, and I don't want to setup my scalarComponent definition for some terrible awful no good reason.
+EXAMPLE
+```tsx
+<FlexForm
+  config={HasuraConfig.client}
+  api={api}  
+  components={{
+    displayName: (props: ScalarComponentPropsBase) => {
+      const {
+        field: { ref, ...inputProps },
+        fieldState: { invalid, isTouched, isDirty },
+        formState: { touchedFields, dirtyFields },
+      } = useController({
+        name: props.fieldInfo.name,
+        control: props.control,
+        rules: {},
+        defaultValue: '',
+      })
+
+      return (
+        <div className="p-float-label">
+          <InputText
+            id={'ff-' + props.fieldInfo.name}
+            ref={ref}
+            {...inputProps}
+            className="p-inputtext-sm w-full bg-purco-blue-primary "
+          />
+          <label htmlFor={'ff-' + props.fieldInfo.name}>
+            {Case.sentence(props.fieldInfo.name)} OVERRIDEN COMPONENT
+          </label>
+        </div>
+      )
+    },
+  }}
+></FlexForm>
+```
+### USE CASE: I have jsonb on a column and want it's columns included.
+
+EXAMPLE
+
+```tsx
+<FlexForm
+  config={HasuraConfig.client}
+  api={api}  
+  components={{
+    displayName: (props: ScalarComponentPropsBase) => {
+      const fields = [...] //See FlexFormLocal
+      return (
+        <div>
+          <FlexFormLocal
+          control={props.control}
+          disableAllFields={props?.disabled}
+          fields={fields}
+        />
+        </div>
+      )
+    },
+  }}
+></FlexForm>
+```
+### USE CASE: I have a relationship in my graphql fragment, and I don't want to setup my scalarComponent definition for some terrible awful no good reason.
+
+
 
 ### `grid: { styles: string,  columnCount: number }`
 styles: is a string that will override the styles applied to the grid.  Use this if you don't want to use CSS grid by default, or if you want more find grained control. 
   
 > Default: `grid grid-cols-3 gap-x-12 gap-y-8 justify-items-stretch`
 
-##### USE CASE: I want a smaller/larger gap between my elements
-##### USE CASE: I want to use flexbox instead
-##### USE CASE: My employer makes me use bootstrap
-##### USE CASE: I think CSS stands for Crapy-Stupid-Sheets
-##### USE CASE: I keep meaning to learn CSS Grid, but you know, no one is making me so...
+### USE CASE: I want a smaller/larger gap between my elements
+### USE CASE: I want to use flexbox instead
+### USE CASE: My employer makes me use bootstrap
+### USE CASE: I think CSS stands for Crapy-Stupid-Sheets
+### USE CASE: I keep meaning to learn CSS Grid, but you know, no one is making me so...
 
 columnCount: How many columns do you want.
 
@@ -174,7 +234,7 @@ Yo dawg!  I heard you like props...
 
 Props allows you to pass props to individual components.
 
-##### USE CASE: I need to modify the validation rules on my components.
+### USE CASE: I need to modify the validation rules on my components.
 ```
 props={ 
   firstName: { rules: { required: true } } 
@@ -185,7 +245,7 @@ props={
 > See: https://react-hook-form.com/api/useform/register
 
 
-##### USE CASE: I need want to turn on time on the PrimeReact Calendar
+### USE CASE: I need want to turn on time on the PrimeReact Calendar
 
 > Prime React wants this: `<Calendar showTime hourFormat="12 or 24">` to turn on time so all we have to do is pass those in
 
@@ -194,7 +254,7 @@ props={
 ```
 > See: https://www.primefaces.org/primereact/showcase/#/setup for components and props
 
-##### USE CASE: I want to supply options to my select box without overriding anything else
+### USE CASE: I want to supply options to my select box without overriding anything else
 
 ```
   kangarooCourtJudgeCount: { options: [
@@ -211,4 +271,4 @@ Override one or more labels shown on the form
 
 
 ### `onDataChange?: (data: any) => void;`
-DEPRECATED
+DEPRECATED - Used by old dataTable, not needed by PrimeReact DataTable
