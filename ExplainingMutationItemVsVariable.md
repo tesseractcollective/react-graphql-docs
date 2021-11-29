@@ -2,7 +2,7 @@ Using variables and item for an update.
 * mutationState.item is given to $item and is used to specify what columns to update with what values
 * mutationState.variables is spread into the gql variables to be used in primary keys or any other part of the query that are not the item to update
 * Note: To set a primary for an update you would add it to the variables
-```
+```ts
 const gql = `query updateUserData($userId: uuid!, $groupId: uuid!, $groupName: String!, $item: userData_update_input) {
   updateUserData_by_pk($userId: uuid!, $groupId: uuid!, set: $item) {
     firstName
@@ -27,8 +27,8 @@ const mutationState= {
 Using variables and item for an insert.
 * mutationState.item is given to $item and is used to specify the item to insert into the database
 * mutationState.variables is spread into the gql variables to be used in primary keys or any other part of the query that are not the item to update
-* Note: Do not give a primary to variables for a insert, because it's an insert
-```
+* Note: Do not give a primary key to variables for a insert, because it's an insert and the primary keys are normally generated server-side
+```ts
 const gql = `query updateUserData($groupName: String!, $item: userData_insert_input) {
   insertUserData_one(object: $item) {
     firstName

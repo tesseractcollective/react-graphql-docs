@@ -2,11 +2,11 @@
 
 ## INTRO
 
-To build mutation in a project using graphql for it's data layer you need to:
+To build mutation in a project using GraphQL for its data layer you need to:
 * Build your UI and components
 * Save their state on the screen
 * Setup a graphql query
-* execute the mutation
+* Execute the mutation
 * Manage errors and success
 
 FlexForm gives you a composable component that combines multiple libraries together to give you a rapid experience for building UIs connected to a graphql backend.
@@ -19,10 +19,10 @@ Still think FlexForm is too much?  Check out FlexFormLocal for even more control
 
 
 ## Libraries
-* react-hook-form - for managing the form, state, error, dirty, etc
-* graphql & react-graphql - To insert and update your data
-* prime react - To show the components
-* tailwindcss - to handle styling
+* [react-hook-form](https://react-hook-form.com/) - for managing the form, state, error, dirty, etc
+* [GraphQL](https://react-hook-form.com/) & [react-graphql](https://github.com/tesseractcollective/react-graphql) - To insert and update your data
+* [PrimeReact](https://www.primefaces.org/primereact/showcase/#/)- To show the components
+* [Tailwind CSS](https://tailwindcss.com/docs) - to handle styling
 
 ## By Use-case
 
@@ -30,7 +30,7 @@ Still think FlexForm is too much?  Check out FlexFormLocal for even more control
 
 > You probably want a single column grid
 
-```
+```tsx
   <FlexForm config={HasuraConfig.userProfile}
             grid={ { 
               columnCount: 1
@@ -172,7 +172,7 @@ columnCount: How many columns do you want.
 
 Yo dawg!  I heard you like props...
 
-Props allows you to pass props to individual components.
+Props allows you to pass props to individual components by field name
 
 ##### USE CASE: I need to modify the validation rules on my components.
 ```

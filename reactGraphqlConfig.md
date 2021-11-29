@@ -7,7 +7,8 @@ We generate our schema to a separate file.
 You can customize this how you want.
 
 example config:
-```
+```js
+// codegen.js
 const env = process.argv[4] || 'dev';
 const config = require(`../......`);
 
@@ -45,7 +46,7 @@ module.exports = {
 ## Set up config file
 IE - `hasuraConfig.ts`
 
-import schema from './generated/graphql.schema.json'; //comes from graphql-code-generator
+`import schema from './generated/graphql.schema.json'; //comes from graphql-code-generator`
 
 
 
@@ -64,13 +65,13 @@ const HasuraConfig = buildHasuraConfig(
 
 > NAMING CONVENTIONS:  We highly recommend your configs match your typenames wherever possible.  It will make things easier to remember and allow us to auto-detect some things for you.
 
-> NAMING CONVETIONS for Lookup Tables: If you're going to be using any tables to lookup values/ids for another table then we recommend the pattern of typeNameSelect.  We key off of this and add relationships for you.
+> NAMING CONVENTIONS for Lookup Tables: If you're going to be using any tables to lookup values/ids for another table then we recommend the pattern of typeNameSelect.  We key off of this and add relationships for you.
 
 ### Other options
 
 from react-graphql/src/types/hasuraConfig/index.d.ts
 
-```
+```ts
 export interface HasuraDataConfig {
     typename: string;
     primaryKey: string[];
@@ -127,7 +128,7 @@ By adding metadata information from hasura we are able to do a lot more for you 
 
 To add metadata we need to get it in json format and pass it into our `buildHasuraConfig` call:
 
-```
+```ts
 const HasuraConfig = buildHasuraConfig(
   schema,
   {
