@@ -16,7 +16,7 @@ FlexFormLocal gives you a composable component that combines multiple libraries 
 
 > Hey, what's the difference between this and your FlexForm
 
-A lot of the power of FlexForm is in it's automatic layouts, and you might want that, without all the rest of it, that's what FlexFormLocal does.
+A lot of the power of FlexForm is in its automatic layouts, and you might want that, without all the rest of it, that's what FlexFormLocal does.
 
 > Uh, can you give me an example
 

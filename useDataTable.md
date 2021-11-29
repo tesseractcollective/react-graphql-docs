@@ -20,7 +20,7 @@ To build a dataTable against graphql in a project you need to
 
 That is just for the front end.  If you have to do server-side as well you have a lot more.  Fortunately hasura gives us all the server side support we need with pagination, sorting, and filtering.
 
-useDataTAble gives you a composable hook that marries multiple libraries together to give you a rapid experience for building dataTables connected to a graphql backend
+useDataTable gives you a composable hook that marries multiple libraries together to give you a rapid experience for building dataTables connected to a graphql backend
 
 ## Libraries
 
@@ -33,7 +33,7 @@ useDataTAble gives you a composable hook that marries multiple libraries togethe
 
 ## Composing your DataTable
 useDataTable will give you these props back:
-```
+```ts
 dataTableProps: Record<string, any>;   //Always spread onto your <DataTable>
 columns: ColumnFromConfig[];           //Children of <DataTable>
 paginationProps: DataTablePaginationProps<T>; //Spread onto <DataTable>
@@ -51,7 +51,7 @@ hideDeleteDialog: () => void;          //Call this function to hide the deleteDi
 
 
 ### Basic Composition
-```
+```tsx
 import {DataTable} from 'primereact/datatable';
 import {useReactGraphql} from '@tesseractcollective/react-graphql'
 import {useDataTable} from '@tesseractcollective/react-graphql-ui'
@@ -77,7 +77,7 @@ function DataTableBasic() {
 ```
 
 ### Pagination, Filter, Order by
-```
+```tsx
   const { dataTableProps, columns, filterProps, paginationProps } = useDataTable({
       gqlConfig: HasuraConfig.claimAmount,
       queryManyState: queryState,
@@ -96,7 +96,7 @@ function DataTableBasic() {
 ```
 
 ### Insert, Delete, Update
-```
+```tsx
   const  {
     dataTableProps,
     columns,
@@ -125,7 +125,7 @@ function DataTableBasic() {
 
 
 ### Insert button instead of Toolbar
-```
+```tsx
   const  {
    ...,
    insertButton
@@ -146,7 +146,7 @@ function DataTableBasic() {
 ```
 
 ### Omitting/sorting/custom/other to your columns
-```
+```tsx
   const { dataTableProps, columns } = useDataTable({
       gqlConfig: HasuraConfig.claimAmount,
       queryManyState: queryState,      
@@ -257,7 +257,7 @@ onRowClick={(path)=> history.push(path)}
 
 If you want sorting or filtering we need to connect useDataTable back to useInfiniteQueryMany. This is how we do it.
 
-```
+```ts
 const queryArgsAtom = atom<UseDataTableQueryArgsAtom>({
   pause: true,
 });
@@ -284,7 +284,7 @@ function myComponent() {
 
 Do you want sorting? If the user clicks a column header we'll use the queryArgsAtom to update your infiniteQueryMany with an order by.
 
-```
+```tsx
 const { dataTableProps, columns, orderByProps } = useDataTable({
     gqlConfig: HasuraConfig.claimAmount,
     queryManyState: queryState,
@@ -329,7 +329,7 @@ See: https://www.primefaces.org/primereact/showcase/#/datatable
 Should we filter?
 
 Example: 
-```
+```tsx
 const { dataTableProps, columns, filterProps, paginationProps } =
     useDataTable({
       gqlConfig: HasuraConfig.claimAmount,
@@ -365,7 +365,7 @@ Prime React defines the following props that influence filtering that we can pas
 
 The main support we're providing is attaching filter to the columns if you set `filterable:true`.
 
-As secondary support we mapped filterMatchMode to Hasura operations based on the scalar datatype of the field.  Basically we give you typescript types so that you don't do something with PrimeReact that Hasura doesn't support, like doing startsWith against a number.
+As secondary support we mapped `filterMatchMode` to Hasura operations based on the scalar datatype of the field.  Basically we give you typescript types so that you don't do something with PrimeReact that Hasura doesn't support, like doing `startsWith` against a number.
 
 #### USE CASE: change match mode
 
