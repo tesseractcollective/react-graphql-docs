@@ -9,11 +9,11 @@ To build mutation in a project using graphql for it's data layer you need to:
 * execute the mutation
 * Manage errors and success
 
-FlexForm gives you a composable component that marries multiple libraries together to give you a rapid experience for building UIs connected to a graphql backend.
+FlexForm gives you a composable component that combines multiple libraries together to give you a rapid experience for building UIs connected to a graphql backend.
 
 Did we say it was composable, because it is. If you want 80% of what FlexForm does, you can probably override whatever 20% you don't like.
 
-We try to use sane defaults as much as possible, but if you don't like them, you have full control.
+We try to derive, infer, and guess at logical default values as much as possible, but if you don't like them, you have full control.
 
 Still think FlexForm is too much?  Check out FlexFormLocal for even more control.
 
@@ -26,7 +26,7 @@ Still think FlexForm is too much?  Check out FlexFormLocal for even more control
 
 ## By Use-case
 
-##### USE CASE: I want a basic register form with 4 fields
+### USE CASE: I want a basic register form with 4 fields
 
 > You probably want a single column grid
 
@@ -42,22 +42,27 @@ Still think FlexForm is too much?  Check out FlexFormLocal for even more control
 
 ```
 
-##### USE CASE: My form has a field that needs to get its value from another table
+### USE CASE: My form has a field that needs to get its value from another table
 
 > As long as your config is setup fully and correctly this should just work
 
 > You might need to setup your metadata, or pass in a config specifically if you need a where clause on that relationship
 
 
+```
+  <FlexForm config={HasuraConfig.userProfile}
+            isNew            
+            configs={{
+              userRole: HasuraConfig.userRoleTypes
+            }}
+            >
+
+```
+
+
 ## Required Props
 ### `config: HasuraDataConfig (react-graphql)`
--> hasura
-  -> graphql
-    -> typename
-    -> primary key
-    -> fragments
-
--> graphql code generator
+See [HasuraDataConfig](https://github.com/tesseractcollective/react-graphql/blob/master/src/types/hasuraConfig/index.ts) for the shape
 
 ## Optional Props
 
@@ -70,13 +75,27 @@ Pass in an array of field names
 ##### USE CASE:  I have a fragment with a lot more fields than I want to use on this form
 
 ### `configs: { string: HasuraDataConfig }`
-Configs are used to tell the form how to handle relationships.  Everything works off of react-graphql configs, so that's all we need to supply here.  
+Configs are used to tell the form how to handle relationships. Everything works off of react-graphql configs, so that's all we need to supply here.
 
--> HasuraDataConfig
--> SelectViaRelationship
+##### USE CASE: I have a view that I exposed in hasura and need to modify the table the view is over
+##### USE CASE: I have a relationship that isn't exposed in my graphql layer and need to connect two tables
+##### USE CASE: I want to provide a where clause to filter the query for one particular relationship
+##### USE CASE: I want to override the fragment/config used on this form from the default one found by react-graphql-ui
+
+
+Example: let's say we have a [foreignKeyId] in your fragment like [personId], and we want the user to be able to select a valid person.  To be able to select a valid [personId] I would add a config here for the graphql relationship that goes on top of my foreign key.  IE - person.
+
+The key is the name of the relationship as found in hasura (hasura -> data -> [tableName] -> relationships).  In our scenario, it's probably person.  The value is a react-graphql-config object.  You probably want to type someting like `hasuraConfig.userProfile`.
+
+
+Related:
+* [reactGraphqlConfig]('reactGraphqlConfig.md')
+* [selectViaRelationship]('selectViaRelationship.md)
 
 **Auto detection of relationship configs**
-We do our best to auto-detect which config to use.  We will look for `tableName` + `Select` first, so if you have a userProfile, we'll look for an key in your configs called `userProfileSelect: {...}`, then we'll look for just the `tableName`, like this: `userProfile: {...}`.  
+When you setup react-graphql-ui you use our `ReactGraphqlUIContext`, which takes in your `HasuraConfig` object that holds all of your react-graphql configs.  
+
+We use this to try and auto-detect which config to use.  We will look in your configs for this pattern: `tableName` + `Select` first, so if your relationship is for the userProfile table, we'll look for a key in your configs called `userProfileSelect: {...}`, then we'll look for just the `tableName`, like this: `userProfile: {...}`.  
 
 * We do this first by looking on configs passed into the component, so you can be specific and override anything you need.  
 * If we don't find it there, then we'll look for the same patterns on the configs object given to the top level provider.
@@ -89,10 +108,6 @@ We do our best to try and autodetect which labels to use.  For now it's a simple
 
 If you want to use something different you can specify which field to use by setting the `config.relationshipMeta?.labelField`.
 
-##### USE CASE: I have a view that I exposed in hasura and need to modify the table the view is over
-##### USE CASE: I have a relationship that isn't exposed in my graphql layer and need to connect two tables
-##### USE CASE: I want to provide a where clause to filter the query for on particular relationship
-##### USE CASE: I want to override the fragment/config used on this form from the default one found by react-graphql-ui
 
 ### `insertConfig: HasuraDataConfig`
 Pass in a separate config for insert statments to use instead of the config

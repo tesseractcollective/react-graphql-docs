@@ -9,7 +9,7 @@ To build mutation in a project using graphql for it's data layer you need to:
 * execute the mutation
 * Manage errors and success
 
-FlexFormLocal gives you a composable component that marries multiple libraries together to give you a rapid experience for building UIs connected to a graphql backend.
+FlexFormLocal gives you a composable component that combines multiple libraries together to give you a rapid experience for building UIs connected to a graphql backend.
 
 
 ## FlexFormLocal vs FlexForm

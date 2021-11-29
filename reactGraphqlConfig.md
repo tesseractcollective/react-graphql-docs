@@ -38,10 +38,15 @@ module.exports = {
 };
 ```
 
+## graphql-code-generator docs
+
+[graphql code generator](https://www.graphql-code-generator.com/docs/getting-started)
+
 ## Set up config file
 IE - `hasuraConfig.ts`
 
 import schema from './generated/graphql.schema.json'; //comes from graphql-code-generator
+
 
 
 ### Set up the basics:
