@@ -252,6 +252,29 @@ onRowClick={(path)=> history.push(path)}
 
 ```
 
+NOTE: If you are adding custom buttons as columns and don't want your onRowClick to fire, be sure to call `event.stopPropogation()`.
+
+Example:
+
+A button that shows a modal requiring input. If you don't do the following below your `onRowClick` will execute (in many cases navigating your users away from the modal you're trying to display)
+```tsx
+<Column
+  header="Show interactive modal"
+  body={(row: any) => {
+    return (
+      <Button
+        label="show"
+        onClick={(e: SyntheticEvent) => {
+          // NOTE: you MUST stopPropogation when the row has an on-row-click action
+          e.stopPropagation()
+          setShowModal(true)
+        }}
+      />
+    )
+  }}
+/>
+```
+
 
 ### `queryArgsAtom?: PrimitiveAtom<UseDataTableQueryArgsAtom>;`
 
